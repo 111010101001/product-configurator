@@ -1,6 +1,7 @@
-﻿namespace ProductConfigurator.Api.Dtos
+﻿using ProductConfigurator.Api.Domain;
+
+namespace ProductConfigurator.Api.Dtos
 {
-    public class ProductDetailsResponse
-    {
-    }
+    public record ProductDetailsResponse(int id, string name, string sku, decimal BasePrice, IReadOnlyList<OptionGroup> optionGroups);
+
 }

@@ -1,9 +1,11 @@
-﻿namespace ProductConfigurator.Api.Dtos
+﻿using ProductConfigurator.Api.Domain;
+
+namespace ProductConfigurator.Api.Dtos
 {
-    public class OptionGroupRequest
+    public record OptionGroupRequest
     {
         public required string Name { get; set; }
 
-        public required string Mode { get; set; }
+        public required SelectionMode Mode { get; set; }
     }
 }

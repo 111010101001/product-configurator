@@ -1,6 +1,6 @@
-﻿namespace ProductConfigurator.Api.Dtos
+﻿using ProductConfigurator.Api.Domain;
+
+namespace ProductConfigurator.Api.Dtos
 {
-    public class RuleResponse
-    {
-    }
+    public class RuleResponse(RuleType rule);
 }

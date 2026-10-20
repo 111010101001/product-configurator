@@ -6,6 +6,6 @@
 
         public required string Sku { get; set; }
 
-        public decimal BasePrice { get; set; }
+        public required decimal BasePrice { get; set; }
     }
 }
