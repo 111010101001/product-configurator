@@ -10,7 +10,7 @@
 
         public ICollection<OptionGroup> OptionGroups { get; set; } = [];
 
-        public ICollection<CompatibilityRule> rules { get; set; } = [];
+        public ICollection<CompatibilityRule> CompatibilityRules { get; set; } = [];
         public decimal BasePrice { get; set; }
     }
 }

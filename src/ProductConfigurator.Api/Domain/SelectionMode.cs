@@ -1,4 +1,4 @@
 ﻿namespace ProductConfigurator.Api.Domain
 {
-    public enum SelectionMode { ExactlyOne = 1, atMostOne = 2, anyNumber = 3 }
+    public enum SelectionMode { ExactlyOne = 1, AtMostOne = 2, AnyNumber = 3 }
 }

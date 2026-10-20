@@ -4,12 +4,12 @@
     {
         public int Id { get; init; }
         public int ProductId { get; set; }
-        public int Option1Id { get; init; }
-        public int Option2Id { get; init; }
-        public ConfigurationOption SourceOptionId { get; set; } = null!;
+        public int SourceOptionId { get; init; }
+        public int TargetOptionId { get; init; }
+        public ConfigurationOption SourceOption { get; set; } = null!;
 
-        public ConfigurationOption TargetOptionId { get; set; } = null!;
+        public ConfigurationOption TargetOption { get; set; } = null!;
 
-        public RuleType rule { get; set; }
+        public RuleType RuleType { get; set; }
     }
 }
