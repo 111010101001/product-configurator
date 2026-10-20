@@ -6,9 +6,9 @@
         public int ProductId { get; set; }
         public int Option1Id { get; init; }
         public int Option2Id { get; init; }
-        public ConfigurationOption Option1 { get; set; }
+        public ConfigurationOption SourceOptionId { get; set; } = null!;
 
-        public ConfigurationOption Option2 { get; set; }
+        public ConfigurationOption TargetOptionId { get; set; } = null!;
 
         public RuleType rule { get; set; }
     }

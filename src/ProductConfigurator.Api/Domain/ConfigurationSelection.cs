@@ -4,7 +4,7 @@
     {
         public int SavedConfigurationId { get; init; }
         public int ConfigurationOptionId { get; init; }
-        public SavedConfiguration Configuration { get; set; } = null!;
-        public ConfigurationOption Option { get; set; } = null!;
+        public SavedConfiguration SavedConfiguration { get; set; } = null!;
+        public ConfigurationOption ConfigurationOption { get; set; } = null!;
     }
 }
