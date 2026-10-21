@@ -2,5 +2,5 @@
 
 namespace ProductConfigurator.Api.Dtos
 {
-    public class RuleResponse(RuleType rule);
+    public record RuleResponse(int Id, RuleType Rule, int SourceOptionId, int TargetOptionId);
 }

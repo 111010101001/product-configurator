@@ -2,6 +2,6 @@
 
 namespace ProductConfigurator.Api.Dtos
 {
-    public record ProductDetailsResponse(int id, string name, string sku, decimal BasePrice, IReadOnlyList<OptionGroup> optionGroups);
+    public record ProductDetailsResponse(int Id, string Name, string Sku, decimal BasePrice, IReadOnlyList<OptionGroupResponse> OptionGroups, IReadOnlyList<RuleResponse> Rules);
 
 }

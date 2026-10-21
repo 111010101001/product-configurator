@@ -2,5 +2,5 @@
 
 namespace ProductConfigurator.Api.Dtos
 {
-    public record OptionGroupResponse(int id, string name, SelectionMode mode, IReadOnlyList<ConfigurationOption> optionGroups);
+    public record OptionGroupResponse(int Id, string Name, SelectionMode Mode, IReadOnlyList<OptionResponse> Options);
 }

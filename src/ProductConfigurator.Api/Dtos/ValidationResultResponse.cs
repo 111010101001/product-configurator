@@ -1,4 +1,4 @@
 ﻿namespace ProductConfigurator.Api.Dtos
 {
-    public class ValidationResultResponse(string code);
+    public record ValidationResultResponse(string Code);
 }
