@@ -1,4 +1,4 @@
 ﻿namespace ProductConfigurator.Api.Dtos
 {
-    public record ViolationResponse(bool IsValid, decimal TotalPrice);
+    public record ViolationResponse(string Code, string Message, IReadOnlyList<int> OptionIds);
 }

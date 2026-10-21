@@ -1,8 +1,8 @@
 ﻿namespace ProductConfigurator.Api.Dtos
 {
-    public record ValidateConfigurationRequest()
+    public record ValidateConfigurationRequest
     {
-        public required int OptionIds { get; set; }
+        public required List<int> OptionIds { get; init; }
 
     }
 }

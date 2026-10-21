@@ -2,10 +2,10 @@
 {
     public record ProductRequest
     {
-        public required string Name { get; set; }
+        public required string Name { get; init; }
 
-        public required string Sku { get; set; }
+        public required string Sku { get; init; }
 
-        public required decimal BasePrice { get; set; }
+        public required decimal BasePrice { get; init; }
     }
 }

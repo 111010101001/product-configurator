@@ -1,5 +1,5 @@
 ﻿namespace ProductConfigurator.Api.Dtos
 {
-    public record ProductSummaryResponse(int id, string name, string sku, decimal BasePrice);
+    public record ProductSummaryResponse(int Id, string Name, string Sku, decimal BasePrice);
 
 }
