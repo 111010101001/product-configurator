@@ -1,4 +1,4 @@
 ﻿namespace ProductConfigurator.Api.Dtos
 {
-    public record ValidationResultResponse(bool IsValid, decimal TotalPrice, IReadOnlyList<ViolationResponse> ViolationResponses);
+    public record ValidationResultResponse(bool IsValid, decimal TotalPrice, IReadOnlyList<ViolationResponse> Violations);
 }
