@@ -12,7 +12,7 @@ using ProductConfigurator.Api.Data;
 namespace ProductConfigurator.Api.Migrations
 {
     [DbContext(typeof(ConfiguratorDbContext))]
-    [Migration("20261022081728_InitialCreate")]
+    [Migration("20261022092346_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -203,13 +203,13 @@ namespace ProductConfigurator.Api.Migrations
                     b.HasOne("ProductConfigurator.Api.Domain.ConfigurationOption", "SourceOption")
                         .WithMany()
                         .HasForeignKey("SourceOptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ProductConfigurator.Api.Domain.ConfigurationOption", "TargetOption")
                         .WithMany()
                         .HasForeignKey("TargetOptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("SourceOption");

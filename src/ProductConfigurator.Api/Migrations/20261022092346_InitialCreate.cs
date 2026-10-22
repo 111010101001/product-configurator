@@ -111,13 +111,13 @@ namespace ProductConfigurator.Api.Migrations
                         column: x => x.SourceOptionId,
                         principalTable: "ConfigurationOptions",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_CompatibilityRules_ConfigurationOptions_TargetOptionId",
                         column: x => x.TargetOptionId,
                         principalTable: "ConfigurationOptions",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_CompatibilityRules_Products_ProductId",
                         column: x => x.ProductId,

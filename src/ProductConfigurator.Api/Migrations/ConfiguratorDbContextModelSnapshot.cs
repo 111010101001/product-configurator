@@ -200,13 +200,13 @@ namespace ProductConfigurator.Api.Migrations
                     b.HasOne("ProductConfigurator.Api.Domain.ConfigurationOption", "SourceOption")
                         .WithMany()
                         .HasForeignKey("SourceOptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ProductConfigurator.Api.Domain.ConfigurationOption", "TargetOption")
                         .WithMany()
                         .HasForeignKey("TargetOptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("SourceOption");

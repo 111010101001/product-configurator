@@ -58,6 +58,14 @@ namespace ProductConfigurator.Api.Data
             modelBuilder.Entity<CompatibilityRule>(entity =>
             {
                 entity.HasIndex(e => new { e.SourceOptionId, e.TargetOptionId, e.RuleType }).IsUnique();
+                entity.HasOne(e => e.SourceOption)
+                  .WithMany()                              // empty: ConfigurationOption has no collection of selections
+                  .HasForeignKey(e => e.SourceOptionId)
+                  .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(e => e.TargetOption)
+                  .WithMany()                              // empty: ConfigurationOption has no collection of selections
+                  .HasForeignKey(e => e.TargetOptionId)
+                  .OnDelete(DeleteBehavior.Restrict);
                 entity.ToTable(t =>
                 {
                     t.HasCheckConstraint("CK_CompatibilityRule_ExcludesOrdered", "[RuleType] <> 2 OR [SourceOptionId] < [TargetOptionId]");
