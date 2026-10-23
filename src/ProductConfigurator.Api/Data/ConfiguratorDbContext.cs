@@ -1,5 +1,4 @@
-﻿using System.Reflection.Metadata;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ProductConfigurator.Api.Domain;
 
 namespace ProductConfigurator.Api.Data
