@@ -23,9 +23,8 @@ namespace ProductConfigurator.Api.Data
             var smallWheels = new ConfigurationOption { Code = "W-S", Name = "Small Wheels", PriceDelta = 50m };
             var largeWheels = new ConfigurationOption { Code = "W-L", Name = "Large Wheels", PriceDelta = 100m };
 
-            var headlights = new ConfigurationOption { Code = "H", Name = "Headlights", PriceDelta = 25m };
-
             var bell = new ConfigurationOption { Code = "B", Name = "Bell", PriceDelta = 10m };
+            var kickstand = new ConfigurationOption { Code = "K", Name = "Kickstand", PriceDelta = 10m };
 
 
             var bike = new Product
@@ -49,7 +48,7 @@ namespace ProductConfigurator.Api.Data
                     new OptionGroup
                         {
                             Name = "Headlights",
-                            Mode = SelectionMode.ExactlyOne,
+                            Mode = SelectionMode.AtMostOne,
                             ConfigurationOptions =
                             [
                                 smallLights,
@@ -64,15 +63,9 @@ namespace ProductConfigurator.Api.Data
                         },
                     new OptionGroup
                         {
-                            Name = "Headlights",
-                            Mode = SelectionMode.AtMostOne,
-                            ConfigurationOptions = [headlights]
-                        },
-                    new OptionGroup
-                        {
                             Name = "Extras",
                             Mode = SelectionMode.AnyNumber,
-                            ConfigurationOptions = [bell]
+                            ConfigurationOptions = [bell, kickstand]
                         },
                 ],
                 CompatibilityRules =

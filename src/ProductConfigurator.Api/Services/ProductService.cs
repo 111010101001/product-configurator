@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProductConfigurator.Api.Data;
+using ProductConfigurator.Api.Domain;
 using ProductConfigurator.Api.Dtos;
 
 namespace ProductConfigurator.Api.Services
@@ -7,11 +8,11 @@ namespace ProductConfigurator.Api.Services
     public class ProductService
     {
         private readonly ConfiguratorDbContext configuratorDbContext;
-        private ILogger<ProductService> _logger;
+        private readonly ILogger<ProductService> logger;
         public ProductService(ConfiguratorDbContext configuratorDbContext, ILogger<ProductService> logger)
         {
             this.configuratorDbContext = configuratorDbContext;
-            _logger = logger;
+            this.logger = logger;
         }
 
         public async Task<IReadOnlyList<ProductSummaryResponse>> GetAllAsync(CancellationToken ct)
@@ -47,9 +48,42 @@ namespace ProductConfigurator.Api.Services
 
             if (product is null) 
             {
-                _logger.LogInformation("Product {ProductId} not found", id);
+                logger.LogInformation("Product {ProductId} not found", id);
             }
             return product;
+        }
+        public async Task<ProductDetailsResponse> CreateAsync(ProductRequest request, CancellationToken ct)
+        {
+            var product = new Product()
+            {
+                Name = request.Name,
+                Sku = request.Sku,
+                BasePrice = request.BasePrice,
+            };
+            configuratorDbContext.Add(product);
+            await configuratorDbContext.SaveChangesAsync();
+
+            return new ProductDetailsResponse(product.Id, product.Name, product.Sku, product.BasePrice, [], []);
+        }
+
+        public async Task<bool> UpdateAsync(int id, ProductRequest request, CancellationToken ct)
+        {
+            var product = await configuratorDbContext.FindAsync<Product>([id], ct);
+            if (product is null)
+            {
+                logger.LogInformation("Product {ProductId} not found", id);
+                return false;
+            }
+            product.Name = request.Name;
+            product.BasePrice = request.BasePrice;
+            await configuratorDbContext.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteAsync(int id, CancellationToken ct)
+        {
+            var deleted = await configuratorDbContext.Products.Where(p => p.Id == id).ExecuteDeleteAsync(ct);
+            return deleted > 0;
         }
     }
 }

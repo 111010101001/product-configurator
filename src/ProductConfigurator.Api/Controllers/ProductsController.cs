@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using ProductConfigurator.Api.Dtos;
 using ProductConfigurator.Api.Services;
 
@@ -22,6 +23,35 @@ namespace ProductConfigurator.Api.Controllers
                 return NotFound();
 
             return product;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ProductDetailsResponse>> Create(ProductRequest request, CancellationToken ct)
+        {
+            var created = await products.CreateAsync(request, ct);
+            return CreatedAtAction(nameof(GetById), new { productId = created.Id }, created);
+        }
+
+        [HttpPut("{productId:int}")]
+        public async Task<IActionResult> Update(int productId, ProductRequest request, CancellationToken ct)
+        {
+            var result = await products.UpdateAsync(productId, request, ct);
+            if (!result)
+            {
+                return NoContent();
+            }
+            return NotFound();
+        }
+
+        [HttpDelete("{productId:int}")]
+        public async Task<IActionResult> Delete(int productId, CancellationToken ct)
+        {
+            var result = await products.DeleteAsync(productId, ct);
+            if (!result)
+            {
+                return NoContent();
+            }
+            return NotFound();
         }
     }
 }
