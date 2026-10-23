@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ProductConfigurator.Api.Data
 {
-    public class SeedData
+    public static class SeedData
     {
         public static async Task SeedAsync(ConfiguratorDbContext db, CancellationToken ct = default)
         {
@@ -18,7 +18,15 @@ namespace ProductConfigurator.Api.Data
             var mediumFrame = new ConfigurationOption { Code = "M", Name = "Medium frame", PriceDelta = 200m };
             var smallFrame = new ConfigurationOption { Code = "S", Name = "Small frame", PriceDelta = 100m };
             var smallLights = new ConfigurationOption { Code = "HL-S", Name = "Small headlights", PriceDelta = 10m };
-            var largeLights = new ConfigurationOption { Code = "HL-S", Name = "Small headlights", PriceDelta = 30m };
+            var largeLights = new ConfigurationOption { Code = "HL-L", Name = "Large headlights", PriceDelta = 30m };
+
+            var smallWheels = new ConfigurationOption { Code = "W-S", Name = "Small Wheels", PriceDelta = 50m };
+            var largeWheels = new ConfigurationOption { Code = "W-L", Name = "Large Wheels", PriceDelta = 100m };
+
+            var headlights = new ConfigurationOption { Code = "H", Name = "Headlights", PriceDelta = 25m };
+
+            var bell = new ConfigurationOption { Code = "B", Name = "Bell", PriceDelta = 10m };
+
 
             var bike = new Product
             {
@@ -48,6 +56,24 @@ namespace ProductConfigurator.Api.Data
                                 largeLights,
                             ]
                         },
+                    new OptionGroup
+                        {
+                            Name = "Wheels",
+                            Mode = SelectionMode.ExactlyOne,
+                            ConfigurationOptions = [ smallWheels, largeWheels ]
+                        },
+                    new OptionGroup
+                        {
+                            Name = "Headlights",
+                            Mode = SelectionMode.AtMostOne,
+                            ConfigurationOptions = [headlights]
+                        },
+                    new OptionGroup
+                        {
+                            Name = "Extras",
+                            Mode = SelectionMode.AnyNumber,
+                            ConfigurationOptions = [bell]
+                        },
                 ],
                 CompatibilityRules =
                 [
@@ -65,6 +91,14 @@ namespace ProductConfigurator.Api.Data
                 SourceOptionId = Math.Min(smallFrame.Id, largeLights.Id),
                 TargetOptionId = Math.Max(smallFrame.Id, largeLights.Id),
             });
+
+            bike.CompatibilityRules.Add(new CompatibilityRule
+            {
+                RuleType = RuleType.Requires,
+                SourceOptionId = smallFrame.Id,     // the option that has the requirement
+                TargetOptionId = smallWheels.Id,    // the option it requires
+            });
+
             await db.SaveChangesAsync(ct);
         }
     }
