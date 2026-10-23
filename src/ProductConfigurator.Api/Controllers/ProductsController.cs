@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ProductConfigurator.Api.Dtos;
 using ProductConfigurator.Api.Services;
 
@@ -38,9 +37,9 @@ namespace ProductConfigurator.Api.Controllers
             var result = await products.UpdateAsync(productId, request, ct);
             if (!result)
             {
-                return NoContent();
+                return NotFound();
             }
-            return NotFound();
+            return NoContent();
         }
 
         [HttpDelete("{productId:int}")]
@@ -49,9 +48,9 @@ namespace ProductConfigurator.Api.Controllers
             var result = await products.DeleteAsync(productId, ct);
             if (!result)
             {
-                return NoContent();
+                return NotFound();
             }
-            return NotFound();
+            return NoContent();
         }
     }
 }

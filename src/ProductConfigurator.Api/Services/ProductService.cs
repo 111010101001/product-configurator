@@ -61,7 +61,7 @@ namespace ProductConfigurator.Api.Services
                 BasePrice = request.BasePrice,
             };
             configuratorDbContext.Add(product);
-            await configuratorDbContext.SaveChangesAsync();
+            await configuratorDbContext.SaveChangesAsync(ct);
 
             return new ProductDetailsResponse(product.Id, product.Name, product.Sku, product.BasePrice, [], []);
         }
@@ -75,8 +75,9 @@ namespace ProductConfigurator.Api.Services
                 return false;
             }
             product.Name = request.Name;
+            product.Sku = request.Sku;
             product.BasePrice = request.BasePrice;
-            await configuratorDbContext.SaveChangesAsync();
+            await configuratorDbContext.SaveChangesAsync(ct);
             return true;
         }
 
