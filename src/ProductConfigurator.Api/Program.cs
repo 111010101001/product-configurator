@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using ProductConfigurator.Api.Data;
 using ProductConfigurator.Api.Options;
@@ -23,6 +24,9 @@ builder.Services.AddOptions<ConfiguratorOptions>()
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<ApiExceptionHandler>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -33,7 +37,8 @@ if (app.Environment.IsDevelopment())
     var db = scope.ServiceProvider.GetRequiredService<ConfiguratorDbContext>();
     await SeedData.SeedAsync(db);
 }
-
+app.UseExceptionHandler();
+app.UseStatusCodePages();
 
 app.UseHttpsRedirection();
 

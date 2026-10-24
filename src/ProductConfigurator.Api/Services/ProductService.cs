@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure.Core;
+using Microsoft.EntityFrameworkCore;
 using ProductConfigurator.Api.Data;
 using ProductConfigurator.Api.Domain;
 using ProductConfigurator.Api.Dtos;
@@ -54,6 +55,12 @@ namespace ProductConfigurator.Api.Services
         }
         public async Task<ProductDetailsResponse> CreateAsync(ProductRequest request, CancellationToken ct)
         {
+            // check if product exists
+            if (await configuratorDbContext.Products.AnyAsync(r => r.Sku == request.Sku, ct))
+            {
+                throw new ConflictException($"SKU '{request.Sku}' is already in use.");
+            }
+
             var product = new Product()
             {
                 Name = request.Name,
@@ -74,6 +81,8 @@ namespace ProductConfigurator.Api.Services
                 logger.LogInformation("Product {ProductId} not found", id);
                 return false;
             }
+            if (await configuratorDbContext.Products.AnyAsync(p => p.Sku == request.Sku && p.Id != id, ct))
+                throw new ConflictException($"SKU '{request.Sku}' is already in use.");
             product.Name = request.Name;
             product.Sku = request.Sku;
             product.BasePrice = request.BasePrice;
@@ -83,6 +92,12 @@ namespace ProductConfigurator.Api.Services
 
         public async Task<bool> DeleteAsync(int id, CancellationToken ct)
         {
+            // any saved configuration references the product, throw a ConflictException
+            bool configs = await configuratorDbContext.SavedConfigurations.AnyAsync(x => x.ProductId == id);
+            if (configs)
+            {
+                throw new ConflictException($"Product {id} has saved configurations and can't be deleted.");
+            }
             var deleted = await configuratorDbContext.Products.Where(p => p.Id == id).ExecuteDeleteAsync(ct);
             return deleted > 0;
         }
