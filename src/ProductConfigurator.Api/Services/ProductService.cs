@@ -93,7 +93,7 @@ namespace ProductConfigurator.Api.Services
         public async Task<bool> DeleteAsync(int id, CancellationToken ct)
         {
             // any saved configuration references the product, throw a ConflictException
-            bool configs = await configuratorDbContext.SavedConfigurations.AnyAsync(x => x.ProductId == id);
+            bool configs = await configuratorDbContext.SavedConfigurations.AnyAsync(x => x.ProductId == id, ct);
             if (configs)
             {
                 throw new ConflictException($"Product {id} has saved configurations and can't be deleted.");

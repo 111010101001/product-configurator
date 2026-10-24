@@ -9,7 +9,7 @@ namespace ProductConfigurator.Api.Services
     {
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
-            if (exception is not ConflictException conflict && exception is not DbUpdateException { InnerException: SqlException { Number: 2601 or 2627 } })
+            if (exception is not ConflictException && exception is not DbUpdateException { InnerException: SqlException { Number: 2601 or 2627 } })
                 return false;   // not ours: the default handling turns it into a generic 500
 
 
