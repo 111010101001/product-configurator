@@ -20,6 +20,9 @@ builder.Services.AddDbContext<ConfiguratorDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
 builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<ConfigurationService>();
+
+builder.Services.AddSingleton<ConfigurationValidator>();
 
 builder.Services.AddOptions<ConfiguratorOptions>()
     .BindConfiguration(ConfiguratorOptions.SectionName)

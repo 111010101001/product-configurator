@@ -11,6 +11,6 @@ namespace ProductConfigurator.Api.Dtos
         public required string Sku { get; init; }
 
         [Range(typeof(decimal), "0", "1000000", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
-        public  decimal BasePrice { get; init; }
+        public required decimal BasePrice { get; init; }
     }
 }
