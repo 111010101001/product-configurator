@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using ProductConfigurator.Api.Data;
 using ProductConfigurator.Api.Options;
 using ProductConfigurator.Api.Services;
+using Scalar.AspNetCore;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,7 @@ builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<ConfigurationService>();
 
 builder.Services.AddSingleton<ConfigurationValidator>();
+builder.Services.AddSingleton(TimeProvider.System);
 
 builder.Services.AddOptions<ConfiguratorOptions>()
     .BindConfiguration(ConfiguratorOptions.SectionName)
@@ -31,6 +34,8 @@ builder.Services.AddOptions<ConfiguratorOptions>()
 
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
+builder.Services.ConfigureHttpJsonOptions(o =>
+    o.SerializerOptions.Converters.Add(new JsonStringEnumConverter(allowIntegerValues: false)));
 
 var app = builder.Build();
 app.UseExceptionHandler();
@@ -40,6 +45,8 @@ app.UseStatusCodePages();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    //app.MapScalarApiReference();
+    app.UseSwaggerUI(o => o.SwaggerEndpoint("/openapi/v1.json", "v1"));
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<ConfiguratorDbContext>();
     await SeedData.SeedAsync(db);

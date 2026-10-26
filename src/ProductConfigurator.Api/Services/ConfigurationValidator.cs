@@ -59,7 +59,7 @@ namespace ProductConfigurator.Api.Services
                     case RuleType.Requires:
                         if (selected.Contains(rule.SourceOptionId) && !selected.Contains(rule.TargetOptionId))
                         {
-                            violations.Add(new ViolationResponse("MissingRequired", $"Must combine Options {options[rule.SourceOptionId].Option.Name} {options[rule.TargetOptionId].Option.Name}.", [ rule.SourceOptionId, rule.TargetOptionId ]));
+                            violations.Add(new ViolationResponse("MissingRequired", $"{options[rule.SourceOptionId].Option.Name} requires {options[rule.TargetOptionId].Option.Name}.", [ rule.SourceOptionId, rule.TargetOptionId ]));
                         }
                         break;
                     default : break;
