@@ -13,6 +13,9 @@ namespace ProductConfigurator.Api.Controllers
     [Route("api")]
     public class ConfigurationsController(ConfigurationService configurations, IOptions<ConfiguratorOptions> options) : ControllerBase
     {
+        [ProducesResponseType<SavedConfigurationResponse>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
         [HttpPost("products/{productId:int}/configurations/validate")]
         public async Task<ActionResult<ValidationResultResponse>> Validate(int productId, ValidateConfigurationRequest request, CancellationToken ct)
         {
@@ -49,7 +52,8 @@ namespace ProductConfigurator.Api.Controllers
         }
 
         [ProducesResponseType<SavedConfigurationResponse>(StatusCodes.Status201Created)]
-        [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
         [HttpPost("products/{productId:int}/configurations")]
         public async Task<ActionResult<SavedConfigurationResponse>> Save(int productId, SaveConfigurationRequest request, CancellationToken ct)

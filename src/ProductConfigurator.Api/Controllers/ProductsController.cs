@@ -27,6 +27,8 @@ namespace ProductConfigurator.Api.Controllers
             return product;
         }
 
+        [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
+        [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
         [ProducesResponseType<ProductDetailsResponse>(StatusCodes.Status201Created)]
         [HttpPost]
         public async Task<ActionResult<ProductDetailsResponse>> Create(ProductRequest request, CancellationToken ct)
@@ -37,6 +39,8 @@ namespace ProductConfigurator.Api.Controllers
 
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
+        [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
         [HttpPut("{productId:int}")]
         public async Task<IActionResult> Update(int productId, ProductRequest request, CancellationToken ct)
@@ -51,6 +55,7 @@ namespace ProductConfigurator.Api.Controllers
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
         [HttpDelete("{productId:int}")]
         public async Task<IActionResult> Delete(int productId, CancellationToken ct)
         {
