@@ -14,6 +14,8 @@ namespace ProductConfigurator.Tests
     {
         private static OptionResponse Option(int id, string name) => new(id, name, name, 0m);
 
+        private record InvalidConfigurationProblem(int Status, List<ViolationResponse> Violations);
+
         private static OptionGroupResponse Group(string name, params OptionResponse[] options)
             => new(0, name, SelectionMode.ExactlyOne, options);
         private static readonly ProductDetailsResponse Bike = new(1, "Bike", "BIKE", 0m,
@@ -57,6 +59,11 @@ namespace ProductConfigurator.Tests
             var response = await client.PostAsJsonAsync($"/api/products/{cityBike.Id}/configurations", request);
 
             Assert.Equal(HttpStatusCode.UnprocessableContent, response.StatusCode);
+            Assert.Equal(HttpStatusCode.UnprocessableContent, response.StatusCode);
+
+            var problem = await response.Content.ReadFromJsonAsync<InvalidConfigurationProblem>(Json);
+            Assert.NotNull(problem);
+            Assert.Contains(problem.Violations, v => v.Code == "MissingRequired");
         }
     }
 }
