@@ -1,7 +1,12 @@
+using System.Reflection;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.EntityFrameworkCore;
+using OpenTelemetry;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using ProductConfigurator.Api.Data;
 using ProductConfigurator.Api.Options;
 using ProductConfigurator.Api.Services;
@@ -36,6 +41,33 @@ builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
 builder.Services.ConfigureHttpJsonOptions(o =>
     o.SerializerOptions.Converters.Add(new JsonStringEnumConverter(allowIntegerValues: false)));
+
+var serviceVersion = typeof(Program).Assembly
+    .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+
+var otel = builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resource => resource
+        .AddService("product-configurator-api", serviceVersion: serviceVersion))
+    .WithTracing(tracing => tracing
+        .AddAspNetCoreInstrumentation()   // a span for each incoming request
+        .AddHttpClientInstrumentation()   // a span for each outgoing HttpClient call (and passes the trace ID on)
+        .AddSqlClientInstrumentation())   // a span for each SQL command, with the query text
+    .WithMetrics(metrics => metrics
+        .AddAspNetCoreInstrumentation()   // request duration, active requests, errors
+        .AddHttpClientInstrumentation()   // outgoing call duration
+        .AddSqlClientInstrumentation()    // SQL command duration
+        .AddMeter("System.Runtime", "Microsoft.EntityFrameworkCore")) // GC, thread pool, CPU; EF query counts
+    .WithLogging(configureBuilder: null, configureOptions: options =>
+    {
+        options.IncludeScopes = true;            // BeginScope data becomes log fields
+        options.IncludeFormattedMessage = true;  // also keep the finished message text
+    });
+
+// Only export when the variable is set, so tests and CI don't try to reach a dashboard
+if (!string.IsNullOrWhiteSpace(builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]))
+{
+    otel.UseOtlpExporter();
+}
 
 var app = builder.Build();
 app.UseExceptionHandler();

@@ -7,7 +7,8 @@
       "launchBrowser": false,
       "applicationUrl": "http://localhost:5029",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+
       }
     },
     "https": {
@@ -16,7 +17,10 @@
       "launchBrowser": false,
       "applicationUrl": "https://localhost:7056;http://localhost:5029",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4317",
+        "OTEL_METRIC_EXPORT_INTERVAL": "5000",
+        "OTEL_METRICS_EXEMPLAR_FILTER": "trace_based"
       }
     }
   }
