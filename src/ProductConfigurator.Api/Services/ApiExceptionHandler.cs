@@ -7,10 +7,15 @@ using ProductConfigurator.Api.Dtos;
 
 namespace ProductConfigurator.Api.Services
 {
-    public class ApiExceptionHandler(IProblemDetailsService problemDetails) : IExceptionHandler
+    public partial class ApiExceptionHandler(IProblemDetailsService problemDetails,
+        ILogger<ProductService> logger) : IExceptionHandler
     {
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
+            if (exception is DbUpdateException { InnerException: SqlException { Number: 2601 or 2627 } sqlException })
+            {
+                LogUniqueIndexViolation(exception, sqlException.Number);
+            }
             ProblemDetails? problem = exception switch
             {
                 ConflictException e => new ProblemDetails
@@ -47,5 +52,8 @@ namespace ProductConfigurator.Api.Services
             });
         }
 
+        [LoggerMessage(Level = LogLevel.Warning,
+            Message = "Unique index violation (SQL error {SqlErrorNumber}): two requests probably saved the same value at once")]
+        private partial void LogUniqueIndexViolation(Exception exception, int sqlErrorNumber);
     }
 }

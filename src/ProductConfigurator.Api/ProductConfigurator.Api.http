@@ -14,3 +14,35 @@ Content-Type: application/json
 
 ### Delete
 DELETE {{host}}/api/products/2
+
+@bikeId = 1
+# Option IDs for the seeded City Bike. Check them with the first request below and adjust if yours differ.
+@smallFrame = 1
+@mediumFrame = 2
+@largeLights = 5
+@smallWheels = 6
+@largeWheels = 7
+
+### 0. City Bike details (check the IDs above)
+GET {{host}}/api/products/{{bikeId}}
+
+### 1. Product not found -> Information
+GET {{host}}/api/products/999
+
+### 2. Valid configuration -> Information, IsValid = true
+POST {{host}}/api/products/{{bikeId}}/configurations/validate
+Content-Type: application/json
+
+{ "optionIds": [ {{mediumFrame}}, {{smallWheels}} ] }
+
+### 3. Invalid configuration -> Information, IsValid = false, 2 violations
+POST {{host}}/api/products/{{bikeId}}/configurations/validate
+Content-Type: application/json
+
+{ "optionIds": [ {{smallFrame}}, {{largeLights}}, {{largeWheels}} ] }
+
+### 4. Duplicate SKU -> 409 (Information log, or Warning with the check commented out)
+POST {{host}}/api/products
+Content-Type: application/json
+
+{ "name": "Another City Bike", "sku": "CB-2026", "basePrice": 9990 }

@@ -6,7 +6,7 @@ using ProductConfigurator.Api.Dtos;
 
 namespace ProductConfigurator.Api.Services
 {
-    public class ProductService
+    public partial class ProductService
     {
         private readonly ConfiguratorDbContext configuratorDbContext;
         private readonly ILogger<ProductService> logger;
@@ -49,17 +49,18 @@ namespace ProductConfigurator.Api.Services
 
             if (product is null) 
             {
-                logger.LogInformation("Product {ProductId} not found", id);
+                LogProductNotFound(id);
             }
             return product;
         }
         public async Task<ProductDetailsResponse> CreateAsync(ProductRequest request, CancellationToken ct)
         {
             // check if product exists
-            if (await configuratorDbContext.Products.AnyAsync(r => r.Sku == request.Sku, ct))
-            {
-                throw new ConflictException($"SKU '{request.Sku}' is already in use.");
-            }
+            //if (await configuratorDbContext.Products.AnyAsync(r => r.Sku == request.Sku, ct))
+            //{
+            //    LogSkuInUse(request.Sku);
+            //    throw new ConflictException($"SKU '{request.Sku}' is already in use.");
+            //}
 
             var product = new Product()
             {
@@ -78,11 +79,14 @@ namespace ProductConfigurator.Api.Services
             var product = await configuratorDbContext.FindAsync<Product>([id], ct);
             if (product is null)
             {
-                logger.LogInformation("Product {ProductId} not found", id);
+                LogProductNotFound(id);
                 return false;
             }
             if (await configuratorDbContext.Products.AnyAsync(p => p.Sku == request.Sku && p.Id != id, ct))
+            {
+                LogSkuInUse(request.Sku);
                 throw new ConflictException($"SKU '{request.Sku}' is already in use.");
+            }
             product.Name = request.Name;
             product.Sku = request.Sku;
             product.BasePrice = request.BasePrice;
@@ -101,5 +105,12 @@ namespace ProductConfigurator.Api.Services
             var deleted = await configuratorDbContext.Products.Where(p => p.Id == id).ExecuteDeleteAsync(ct);
             return deleted > 0;
         }
+
+        [LoggerMessage(Level = LogLevel.Information, Message = "Product {ProductId} not found")]
+        private partial void LogProductNotFound(int productId);
+        [LoggerMessage(Level = LogLevel.Information, Message = "SKU '{Sku}' is already in use.")]
+        private partial void LogSkuInUse(string sku);
     }
+
+
 }

@@ -5,15 +5,21 @@ using ProductConfigurator.Api.Dtos;
 
 namespace ProductConfigurator.Api.Services
 {
-    public class ConfigurationService(ProductService products, 
+    public partial class ConfigurationService(ProductService products, 
         ConfigurationValidator validator,
         ConfiguratorDbContext db,
+        ILogger<ProductService> logger,
         TimeProvider timeProvider)
     {
         public async Task<ValidationResultResponse?> ValidateAsync(int productId, IReadOnlyCollection<int> optionIds, CancellationToken ct)
         {
             var product = await products.GetByIdAsync(productId, ct);
-            return product is null ? null : validator.Validate(product, optionIds);
+            if (product is null)
+                return null; // ProductService has already logged "not found"
+
+            var result = validator.Validate(product, optionIds);
+            LogProductConfiguration(productId, optionIds.Count, result.IsValid, result.Violations.Count);
+            return result;
         }
 
         public async Task<SavedConfigurationResponse?> GetByIdAsync(int configurationId, CancellationToken ct)
@@ -41,5 +47,8 @@ namespace ProductConfigurator.Api.Services
             await db.SaveChangesAsync(ct);
             return await GetByIdAsync(configuration.Id, ct);
         }
+
+        [LoggerMessage(Level = LogLevel.Information, Message = "Validated configuration for product {ProductId}: {OptionCount} options, valid: {IsValid}, {ViolationCount} violations")]
+        private partial void LogProductConfiguration(int productId, int optionCount, bool isValid, int violationCount);
     }
 }

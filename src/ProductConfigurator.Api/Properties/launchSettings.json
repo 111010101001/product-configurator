@@ -5,16 +5,40 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": false,
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft.AspNetCore": "Warning"
+        },
+        "OpenTelemetry": {
+          "LogLevel": {
+            "Microsoft.EntityFrameworkCore.Database.Command": "Warning"
+          }
+        }
+      },
       "applicationUrl": "http://localhost:5029",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-
+        "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4317",
+        "OTEL_METRIC_EXPORT_INTERVAL": "5000",
+        "OTEL_METRICS_EXEMPLAR_FILTER": "trace_based"
       }
     },
     "https": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": false,
+            "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft.AspNetCore": "Warning"
+        },
+        "OpenTelemetry": {
+          "LogLevel": {
+            "Microsoft.EntityFrameworkCore.Database.Command": "Warning"
+          }
+        }
+      },
       "applicationUrl": "https://localhost:7056;http://localhost:5029",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
