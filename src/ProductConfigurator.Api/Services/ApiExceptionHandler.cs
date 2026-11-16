@@ -8,7 +8,7 @@ using ProductConfigurator.Api.Dtos;
 namespace ProductConfigurator.Api.Services
 {
     public partial class ApiExceptionHandler(IProblemDetailsService problemDetails,
-        ILogger<ProductService> logger) : IExceptionHandler
+        ILogger<ApiExceptionHandler> logger) : IExceptionHandler
     {
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {

@@ -8,7 +8,7 @@ namespace ProductConfigurator.Api.Services
     public partial class ConfigurationService(ProductService products, 
         ConfigurationValidator validator,
         ConfiguratorDbContext db,
-        ILogger<ProductService> logger,
+        ILogger<ConfigurationService> logger,
         TimeProvider timeProvider)
     {
         public async Task<ValidationResultResponse?> ValidateAsync(int productId, IReadOnlyCollection<int> optionIds, CancellationToken ct)

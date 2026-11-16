@@ -1,20 +1,5 @@
 @host = https://localhost:7056
 
-### Create
-POST {{host}}/api/products
-Content-Type: application/json
-
-{ "name": "Cargo Bike", "sku": "CARGO-1", "basePrice": 24990 }
-
-### Update
-PUT {{host}}/api/products/2
-Content-Type: application/json
-
-{ "name": "Cargo Bike XL", "sku": "CARGO-1", "basePrice": 26990 }
-
-### Delete
-DELETE {{host}}/api/products/2
-
 @bikeId = 1
 # Option IDs for the seeded City Bike. Check them with the first request below and adjust if yours differ.
 @smallFrame = 1
@@ -46,3 +31,19 @@ POST {{host}}/api/products
 Content-Type: application/json
 
 { "name": "Another City Bike", "sku": "CB-2026", "basePrice": 9990 }
+
+### Create
+POST {{host}}/api/products
+Content-Type: application/json
+
+{ "name": "Cargo Bike", "sku": "CARGO-1", "basePrice": 24990 }
+
+### Update
+PUT {{host}}/api/products/2
+Content-Type: application/json
+
+{ "name": "Cargo Bike XL", "sku": "CARGO-1", "basePrice": 26990 }
+
+### Delete
+DELETE {{host}}/api/products/2
+

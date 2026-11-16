@@ -56,11 +56,11 @@ namespace ProductConfigurator.Api.Services
         public async Task<ProductDetailsResponse> CreateAsync(ProductRequest request, CancellationToken ct)
         {
             // check if product exists
-            //if (await configuratorDbContext.Products.AnyAsync(r => r.Sku == request.Sku, ct))
-            //{
-            //    LogSkuInUse(request.Sku);
-            //    throw new ConflictException($"SKU '{request.Sku}' is already in use.");
-            //}
+            if (await configuratorDbContext.Products.AnyAsync(r => r.Sku == request.Sku, ct))
+            {
+                LogSkuInUse(request.Sku);
+                throw new ConflictException($"SKU '{request.Sku}' is already in use.");
+            }
 
             var product = new Product()
             {
