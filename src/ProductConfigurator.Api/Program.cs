@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Diagnostics;
@@ -49,6 +50,7 @@ var otel = builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource
         .AddService("product-configurator-api", serviceVersion: serviceVersion))
     .WithTracing(tracing => tracing
+        .SetSampler(new AlwaysOnSampler())
         .AddAspNetCoreInstrumentation()   // a span for each incoming request
         .AddHttpClientInstrumentation()   // a span for each outgoing HttpClient call (and passes the trace ID on)
         .AddSqlClientInstrumentation())   // a span for each SQL command, with the query text
@@ -70,6 +72,17 @@ if (!string.IsNullOrWhiteSpace(builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOIN
 }
 
 var app = builder.Build();
+app.Use(async (context, next) =>
+{
+    var traceId = Activity.Current?.TraceId.ToString();
+    if (!string.IsNullOrEmpty(traceId) && traceId != default(ActivityTraceId).ToString())
+    {
+        context.Request.Headers["trace"] = traceId;
+    }
+
+    await next();
+});
+
 app.UseExceptionHandler();
 app.UseStatusCodePages();
 
