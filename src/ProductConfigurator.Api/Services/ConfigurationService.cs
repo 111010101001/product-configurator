@@ -2,6 +2,7 @@
 using ProductConfigurator.Api.Data;
 using ProductConfigurator.Api.Domain;
 using ProductConfigurator.Api.Dtos;
+using ProductConfigurator.Api.Telemetry;
 
 namespace ProductConfigurator.Api.Services
 {
@@ -19,6 +20,13 @@ namespace ProductConfigurator.Api.Services
 
             var result = validator.Validate(product, optionIds);
             LogProductConfiguration(productId, optionIds.Count, result.IsValid, result.Violations.Count);
+
+            using var activity = ConfiguratorTelemetry.Source.StartActivity("configuration.validate");
+            activity?.SetTag("configurator.id", productId);
+            activity?.SetTag("configurator.options", optionIds.Count);
+            activity?.SetTag("configurator.valid", result.IsValid);
+            activity?.SetTag("configurator.violations", result.Violations.Count);
+
             return result;
         }
 

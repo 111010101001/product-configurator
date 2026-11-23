@@ -11,6 +11,7 @@ using OpenTelemetry.Trace;
 using ProductConfigurator.Api.Data;
 using ProductConfigurator.Api.Options;
 using ProductConfigurator.Api.Services;
+using ProductConfigurator.Api.Telemetry;
 using Scalar.AspNetCore;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
@@ -53,6 +54,7 @@ var otel = builder.Services.AddOpenTelemetry()
         .SetSampler(new AlwaysOnSampler())
         .AddAspNetCoreInstrumentation()   // a span for each incoming request
         .AddHttpClientInstrumentation()   // a span for each outgoing HttpClient call (and passes the trace ID on)
+        .AddSource(ConfiguratorTelemetry.Name)
         .AddSqlClientInstrumentation())   // a span for each SQL command, with the query text
     .WithMetrics(metrics => metrics
         .AddAspNetCoreInstrumentation()   // request duration, active requests, errors
@@ -77,7 +79,11 @@ app.Use(async (context, next) =>
     var traceId = Activity.Current?.TraceId.ToString();
     if (!string.IsNullOrEmpty(traceId) && traceId != default(ActivityTraceId).ToString())
     {
-        context.Request.Headers["trace"] = traceId;
+        context.Response.OnStarting(() =>
+        {
+            context.Response.Headers["X-Trace-Id"] = traceId;
+            return Task.CompletedTask;
+        });
     }
 
     await next();
