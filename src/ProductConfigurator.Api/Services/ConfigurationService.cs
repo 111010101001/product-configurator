@@ -10,6 +10,7 @@ namespace ProductConfigurator.Api.Services
         ConfigurationValidator validator,
         ConfiguratorDbContext db,
         ILogger<ConfigurationService> logger,
+        ConfiguratorMetrics configuratorMetrics,
         TimeProvider timeProvider)
     {
         public async Task<ValidationResultResponse?> ValidateAsync(int productId, IReadOnlyCollection<int> optionIds, CancellationToken ct)
@@ -27,6 +28,8 @@ namespace ProductConfigurator.Api.Services
 
             activity?.SetTag("configurator.valid", result.IsValid);
             activity?.SetTag("configurator.violations", result.Violations.Count);
+
+            configuratorMetrics.RecordValidation(result.IsValid, "ValidateAsync");
 
             return result;
         }

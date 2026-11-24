@@ -47,6 +47,8 @@ builder.Services.ConfigureHttpJsonOptions(o =>
 var serviceVersion = typeof(Program).Assembly
     .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
 
+builder.Services.AddSingleton<ConfiguratorMetrics>();
+
 var otel = builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource
         .AddService("product-configurator-api", serviceVersion: serviceVersion))
@@ -60,7 +62,7 @@ var otel = builder.Services.AddOpenTelemetry()
         .AddAspNetCoreInstrumentation()   // request duration, active requests, errors
         .AddHttpClientInstrumentation()   // outgoing call duration
         .AddSqlClientInstrumentation()    // SQL command duration
-        .AddMeter("System.Runtime", "Microsoft.EntityFrameworkCore")) // GC, thread pool, CPU; EF query counts
+        .AddMeter("System.Runtime", "Microsoft.EntityFrameworkCore", ConfiguratorTelemetry.Name)) // GC, thread pool, CPU; EF query counts
     .WithLogging(configureBuilder: null, configureOptions: options =>
     {
         options.IncludeScopes = true;            // BeginScope data becomes log fields
