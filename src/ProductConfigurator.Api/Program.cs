@@ -115,7 +115,6 @@ app.UseHttpsRedirection();
 
 app.MapControllers();
 
-var options = new HealthCheckOptions { Predicate = r => r.Tags.Contains("live") };
 app.MapHealthChecks("/health/live", new HealthCheckOptions
 {
     Predicate = check => check.Tags.Contains("live")
