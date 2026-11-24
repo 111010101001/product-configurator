@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure;
+using Microsoft.EntityFrameworkCore;
 using ProductConfigurator.Api.Data;
 using ProductConfigurator.Api.Domain;
 using ProductConfigurator.Api.Dtos;
@@ -15,6 +16,10 @@ namespace ProductConfigurator.Api.Services
     {
         public async Task<ValidationResultResponse?> ValidateAsync(int productId, IReadOnlyCollection<int> optionIds, CancellationToken ct)
         {
+            return await ValidateAsync(productId, optionIds, "validate", ct);
+        }
+        private async Task<ValidationResultResponse?> ValidateAsync(int productId, IReadOnlyCollection<int> optionIds, string operation, CancellationToken ct)
+        {
             using var activity = ConfiguratorTelemetry.Source.StartActivity("configuration.validate");
             activity?.SetTag("configurator.product_id", productId);
             activity?.SetTag("configurator.option_count", optionIds.Count);
@@ -27,9 +32,9 @@ namespace ProductConfigurator.Api.Services
             LogProductConfiguration(productId, optionIds.Count, result.IsValid, result.Violations.Count);
 
             activity?.SetTag("configurator.valid", result.IsValid);
-            activity?.SetTag("configurator.violations", result.Violations.Count);
+            activity?.SetTag("configurator.violation_count", result.Violations.Count);
 
-            configuratorMetrics.RecordValidation(result.IsValid, "ValidateAsync");
+            configuratorMetrics.RecordValidation(result.IsValid, operation);
 
             return result;
         }
@@ -41,7 +46,7 @@ namespace ProductConfigurator.Api.Services
 
         public async Task<SavedConfigurationResponse?> SaveAsync(int productId, SaveConfigurationRequest request, CancellationToken ct)
         {
-            var validation = await ValidateAsync(productId, request.OptionIds.ToArray(), ct);
+            var validation = await ValidateAsync(productId, request.OptionIds.ToArray(), "save", ct);
             if (validation is null)
                 return null;
             if (validation.IsValid == false)

@@ -32,6 +32,12 @@ Content-Type: application/json
 
 { "name": "Another City Bike", "sku": "CB-2026", "basePrice": 9990 }
 
+### 5. Invalid save -> 422, counted as operation=save, valid=false
+POST {{host}}/api/products/{{bikeId}}/configurations
+Content-Type: application/json
+
+{ "name": "Broken", "optionIds": [ {{smallFrame}}, {{largeWheels}} ] }
+
 ### Create
 POST {{host}}/api/products
 Content-Type: application/json

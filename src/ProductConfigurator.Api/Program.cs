@@ -2,8 +2,10 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -49,12 +51,16 @@ var serviceVersion = typeof(Program).Assembly
 
 builder.Services.AddSingleton<ConfiguratorMetrics>();
 
+builder.Services.AddHealthChecks()
+    .AddCheck("self", () => HealthCheckResult.Healthy(), tags: ["live"])
+    .AddDbContextCheck<ConfiguratorDbContext>(tags: ["ready"]);
+
 var otel = builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource
         .AddService("product-configurator-api", serviceVersion: serviceVersion))
     .WithTracing(tracing => tracing
         .SetSampler(new AlwaysOnSampler())
-        .AddAspNetCoreInstrumentation()   // a span for each incoming request
+        .AddAspNetCoreInstrumentation(o => o.Filter = ctx => !ctx.Request.Path.StartsWithSegments("/health"))  // a span for each incoming request
         .AddHttpClientInstrumentation()   // a span for each outgoing HttpClient call (and passes the trace ID on)
         .AddSource(ConfiguratorTelemetry.Name)
         .AddSqlClientInstrumentation())   // a span for each SQL command, with the query text
@@ -108,5 +114,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapControllers();
+
+var options = new HealthCheckOptions { Predicate = r => r.Tags.Contains("…") };
+options.DisableHttpMetrics();
 
 app.Run();
