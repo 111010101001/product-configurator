@@ -115,7 +115,15 @@ app.UseHttpsRedirection();
 
 app.MapControllers();
 
-var options = new HealthCheckOptions { Predicate = r => r.Tags.Contains("…") };
-options.DisableHttpMetrics();
+var options = new HealthCheckOptions { Predicate = r => r.Tags.Contains("live") };
+app.MapHealthChecks("/health/live", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("live")
+}).DisableHttpMetrics();
+
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("ready")
+}).DisableHttpMetrics();
 
 app.Run();

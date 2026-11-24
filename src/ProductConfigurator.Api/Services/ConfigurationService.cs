@@ -1,5 +1,4 @@
-﻿using Azure;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ProductConfigurator.Api.Data;
 using ProductConfigurator.Api.Domain;
 using ProductConfigurator.Api.Dtos;

@@ -38,6 +38,12 @@ Content-Type: application/json
 
 { "name": "Broken", "optionIds": [ {{smallFrame}}, {{largeWheels}} ] }
 
+### 6. Liveness
+GET {{host}}/health/live
+
+### 7. Readiness (checks the database)
+GET {{host}}/health/ready
+
 ### Create
 POST {{host}}/api/products
 Content-Type: application/json
