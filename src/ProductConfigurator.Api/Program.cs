@@ -55,6 +55,7 @@ builder.Services.AddHealthChecks()
     .AddCheck("self", () => HealthCheckResult.Healthy(), tags: ["live"])
     .AddDbContextCheck<ConfiguratorDbContext>(tags: ["ready"]);
 
+
 var otel = builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource
         .AddService("product-configurator-api", serviceVersion: serviceVersion))
@@ -81,7 +82,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins("http://localhost:5173");
+                          policy.WithOrigins(builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? []).AllowAnyHeader()
+                            .AllowAnyMethod();
                       });
 });
 
@@ -124,6 +126,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseCors(MyAllowSpecificOrigins);
 app.MapControllers();
+
+
 
 app.MapHealthChecks("/health/live", new HealthCheckOptions
 {

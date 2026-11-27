@@ -28,7 +28,6 @@ function App() {
   }, [])
   
   return status !== 'loaded' ? <p>Status: {status}</p> : <ul>{products.map(prod => <li key={prod.id}>{prod.id},{prod.name},{prod.basePrice}</li>)}</ul>
-  // render "Loading…", the error, or a <ul> with one <li key={p.id}> per product
 }
 
 export default App

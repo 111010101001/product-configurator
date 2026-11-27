@@ -13,7 +13,7 @@ namespace ProductConfigurator.Api.Controllers
     [Route("api")]
     public class ConfigurationsController(ConfigurationService configurations, IOptions<ConfiguratorOptions> options) : ControllerBase
     {
-        [ProducesResponseType<SavedConfigurationResponse>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ValidationResultResponse>(StatusCodes.Status200OK)]
         [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
         [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
         [HttpPost("products/{productId:int}/configurations/validate")]
